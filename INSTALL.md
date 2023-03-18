@@ -37,7 +37,7 @@ pip install aiogram
 ```
 Copy HTTP API token
 
-6. Modify `fortune_bot.py`
+6. Create `secret_bot.py` like `secret_bot_example.py`
 
 7. Run `./start_bot.sh`
 

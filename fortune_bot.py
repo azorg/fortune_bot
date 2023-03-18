@@ -26,7 +26,7 @@ async def send_welcome(message: types.Message):
 async def send_welcome(message: types.Message):
    await message.reply(\
        "Я бот, который овечает случайными афоризмами на русском языке и БОЛЬШЕ НИЧЕГО!\n" + \
-       "Исходные тексты доступны: https://github.com/azorg/fortune_bot/\n")
+       "Исходные тексты доступны тут: https://github.com/azorg/fortune_bot/\n")
 
 # событие, которое запускается в ответ на любой текст, введённый пользователем.
 @DP.message_handler()
@@ -35,7 +35,7 @@ async def echo(message: types.Message):
    msg = ""
    if (len(message.text) > 2):
       msg = "Мне все равно, что Вы мне пишите.\n" + \
-            "Вот вам просто еще одна шуточка:\n"
+            "Вот Вам просто еще одна шуточка:\n\n"
    print(message)
    res = sp.run(CMD.split(), stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
    await message.answer(msg + res.stdout)
