@@ -77,7 +77,7 @@ async def send_welcome(message: types.Message):
     cpufreq = sp.run(CPUFREQ, stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
     await message.answer(cpuinfo.stdout + cpufreq.stdout)
 
-# обработка команды /doname
+# обработка команды /donate
 @DP.message_handler(commands=['donate'])
 async def send_welcome(message: types.Message):
     await message.reply(\
