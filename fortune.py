@@ -9,8 +9,12 @@ import subprocess as sp
 FORTUNE = "/usr/games/fortune"
 
 CPUINFO = ["sh",  "-c",
-           "cat /proc/cpuinfo | grep 'model name' | head -n1 | " + \
+           "cat /proc/cpuinfo | grep 'model name' | head -n 1 | " + \
            "cut -d: -f2 | sed -r 's/  */ /g' | sed -r 's/^ *| *$//'"]
+
+CPUFREQ = ["sh",  "-c",
+           "cat /proc/cpuinfo | grep 'cpu MHz' | head -n 1 | " + \
+           "cut -d: -f2 | sed 's/^ */F = /' | sed 's/ *$/ MHz/'"]
 
 DISK = ["sh", "-c",
         "LC_ALL=C df -Phl -x tmpfs | grep -v '/dev$'"]
@@ -18,8 +22,9 @@ DISK = ["sh", "-c",
 output = sp.run(FORTUNE.split(), stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
 print(output.stdout)
 
-output = sp.run(CPUINFO, stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
-print(output.stdout)
+cpuinfo = sp.run(CPUINFO, stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
+cpufreq = sp.run(CPUFREQ, stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
+print(cpuinfo.stdout + cpufreq.stdout)
 
 output = sp.run(DISK, stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
 print(output.stdout)
