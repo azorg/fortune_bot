@@ -7,8 +7,10 @@ import subprocess as sp
 # токен, полученный от @BotFather
 from secret_bot import API_TOKEN
 
-# команда запуска fortune
-CMD = "/usr/games/fortune"
+# команды запуска
+FORTUNE = "/usr/games/fortune"
+UPTIME = "uptime -p"
+SENSORS = "sensors -A"
     
 BOT = Bot(token=API_TOKEN)
 DP = Dispatcher(BOT)
@@ -24,21 +26,50 @@ async def send_welcome(message: types.Message):
 # обработка команды /help
 @DP.message_handler(commands=['help'])
 async def send_welcome(message: types.Message):
-   await message.reply(\
-       "Я бот, который овечает случайными афоризмами на русском языке и БОЛЬШЕ НИЧЕГО!\n" + \
-       "Исходные тексты доступны тут: https://github.com/azorg/fortune_bot/\n")
+    await message.reply(\
+       "Я бот, который овечает случайными афоризмами на русском языке и БОЛЬШЕ НИЧЕГО!\n\n" + \
+       "Но есть несколько команд:\n" +
+       "/help - помощь;\n" +
+       "/sources - ссылка на исходные коды бота;\n" +
+       "/uptime - время работы сервера;\n" +
+       "/sens - показания датчиков (температура, обороты кулера и т.п.);\n" +
+       "/donate - номер СБЕР карты для добровольных пожертвований.\n")
+
+# обработка команды /sources
+@DP.message_handler(commands=['sources'])
+async def send_welcome(message: types.Message):
+    await message.reply(\
+        "Исходные тексты бота на Python доступны тут: https://github.com/azorg/fortune_bot\n")
+
+# обработка команды /uptime
+@DP.message_handler(commands=['uptime'])
+async def send_welcome(message: types.Message):
+    res = sp.run(UPTIME.split(), stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
+    await message.answer(res.stdout)
+
+# обработка команды /sens
+@DP.message_handler(commands=['sens'])
+async def send_welcome(message: types.Message):
+    res = sp.run(SENSORS.split(), stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
+    await message.answer(res.stdout)
+
+# обработка команды /doname
+@DP.message_handler(commands=['donate'])
+async def send_welcome(message: types.Message):
+    await message.reply(\
+        "Любые доброовольные пожертвования принимаются в рублях на СБЕР карту 4817 7603 2192 0930\n")
 
 # событие, которое запускается в ответ на любой текст, введённый пользователем.
 @DP.message_handler()
 async def echo(message: types.Message):
-   # TODO: можно обработать то, что вводит пользователь, но пока просто печать
-   msg = ""
-   if (len(message.text) > 2):
-      msg = "Мне все равно, что Вы мне пишите.\n" + \
-            "Вот Вам просто еще одна шуточка:\n\n"
-   print(message)
-   res = sp.run(CMD.split(), stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
-   await message.answer(msg + res.stdout)
+    # TODO: можно обработать то, что вводит пользователь, но пока просто печать
+    print(message)
+    msg = ""
+    if (len(message.text) > 3):
+        msg = "Мне все равно, что Вы мне пишите.\n" + \
+              "Вот Вам просто еще одна шуточка:\n\n"
+    res = sp.run(FORTUNE.split(), stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
+    await message.answer(msg + res.stdout)
 
 def main():
     executor.start_polling(DP, skip_updates=True)
