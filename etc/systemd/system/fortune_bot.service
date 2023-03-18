@@ -1,0 +1,14 @@
+[Unit]
+Description=Telegram Fortune Bot service
+After=network.target auditd.service
+
+[Service]
+User=user
+WorkingDirectory=/home/user/work/telegram/fortune_bot
+ExecStart=/home/user/work/telegram/fortune_bot/start_bot.sh
+Restart=allways
+
+[Install]
+WantedBy=multi-user.target
+Alias=fortune_bot.service
+

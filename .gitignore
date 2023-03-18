@@ -1,0 +1,7 @@
+venv
+*.swp
+*.pyc
+secret_bot.py
+__pycache__
+
+
