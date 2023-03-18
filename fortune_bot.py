@@ -25,16 +25,20 @@ async def send_welcome(message: types.Message):
 @DP.message_handler(commands=['help'])
 async def send_welcome(message: types.Message):
    await message.reply(\
-       "Я бот, который овечает случайными афоризмами на русском языке и БОЛЬШЕ НИЧЕГО!\n")
+       "Я бот, который овечает случайными афоризмами на русском языке и БОЛЬШЕ НИЧЕГО!\n" + \
+       "Исходные тексты доступны: https://github.com/azorg/fortune_bot/\n")
 
 # событие, которое запускается в ответ на любой текст, введённый пользователем.
 @DP.message_handler()
 async def echo(message: types.Message):
    # TODO: можно обработать то, что вводит пользователь, но пока просто печать
-   #print(message.text)
+   msg = ""
+   if (len(message.text) > 2):
+      msg = "Мне все равно, что Вы мне пишите.\n" + \
+            "Вот вам просто еще одна шуточка:\n"
    print(message)
    res = sp.run(CMD.split(), stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
-   await message.answer(res.stdout)
+   await message.answer(msg + res.stdout)
 
 def main():
     executor.start_polling(DP, skip_updates=True)
