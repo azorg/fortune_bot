@@ -1,5 +1,6 @@
 2023.03.19
  + /mem
+ + build_env.sh
 
 2023.03.18
  + добавлены команды /uptime, /sens, /donate
