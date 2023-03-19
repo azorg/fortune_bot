@@ -5,20 +5,26 @@ from aiogram import Bot, Dispatcher, executor, types
 import subprocess as sp
 
 # токен, полученный от @BotFather
-from secret_bot import API_TOKEN
+try:
+    from secret_bot import API_TOKEN
+except:
+    API_TOKEN = "0123456789:AAAOOOlefqewoOUyOIOiybOUybUYvpwrXRX"
 
 # команды запуска
 FORTUNE = "/usr/games/fortune"
 UPTIME = "uptime -p"
 SENSORS = "sensors -A"
+MEMINFO = ["sh", "-c",
+           "free -m | tail -n +2 | " + \
+           "awk '{printf(\"%s total=%sMB used=%sMB free=%sMB\\n\",$1,$2,$3,$4)}'"]
+DISK = ["sh", "-c",
+        "LC_ALL=C df -Phl -x tmpfs | grep -v '/dev$'"]
 CPUINFO = ["sh",  "-c",
            "cat /proc/cpuinfo | grep 'model name' | head -n1 | " + \
            "cut -d: -f2 | sed -r 's/  */ /g' | sed -r 's/^ *| *$//'"]
 CPUFREQ = ["sh",  "-c",
            "cat /proc/cpuinfo | grep 'cpu MHz' | head -n 1 | " + \
-           "cut -d: -f2 | sed 's/^ */F = /' | sed 's/ *$/ MHz/'"]
-DISK = ["sh", "-c",
-        "LC_ALL=C df -Phl -x tmpfs | grep -v '/dev$'"]
+           "cut -d: -f2 | sed 's/^ */F=/' | sed 's/ *$/MHz/'"]
     
 BOT = Bot(token=API_TOKEN)
 DP = Dispatcher(BOT)
@@ -41,6 +47,7 @@ async def send_welcome(message: types.Message):
        "/sources - ссылка на исходные коды бота;\n" + \
        "/uptime - время работы сервера;\n" + \
        "/sens - показания датчиков (температура, обороты кулера и т.п.);\n" + \
+       "/mem - размер используемой памяти и swap на 'сервере';\n" + \
        "/disk - размер дисков (в т.ч. использованное пространство) на 'сервере';\n" + \
        "/cpu - тип процессора на 'сервере';\n" + \
        "/donate - номер СБЕР карты для добровольных пожертвований.\n")
@@ -62,6 +69,12 @@ async def send_welcome(message: types.Message):
 @DP.message_handler(commands=['sens'])
 async def send_welcome(message: types.Message):
     res = sp.run(SENSORS.split(), stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
+    await message.answer(res.stdout)
+
+# обработка команды /mem
+@DP.message_handler(commands=['mem'])
+async def send_welcome(message: types.Message):
+    res = sp.run(MEMINFO, stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
     await message.answer(res.stdout)
 
 # обработка команды /disks
